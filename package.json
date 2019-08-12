@@ -1,0 +1,17 @@
+{
+  "name": "node-ledsender2010-wrapper",
+  "version": "1.0.0",
+  "description": "NodeJS wrapper for LEDSender2010.dll",
+  "main": "index.js",
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "author": "mhycy",
+  "license": "ISC",
+  "gypfile": true,
+  "dependencies": {
+    "bindings": "^1.5.0"
+  },
+  "os" : [ "win32" ],
+  "cpu": [ "x86", "x64" ]
+}
