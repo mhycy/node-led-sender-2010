@@ -1,5 +1,5 @@
-#ifndef __ledsender__
-#define __ledsender__
+#ifndef __LEDSENDER2010_WRAPPER__
+#define __LEDSENDER2010_WRAPPER__
 
 /*
    参数说明
@@ -8,7 +8,7 @@
 #include <windows.h>
 #include <tchar.h>
 
-#define WM_LED_NOTIFY          1025;
+#define WM_LED_NOTIFY          1025
 
 //缺省数据包大小
 #define DEFAULT_PKP_LENGTH     512
@@ -808,128 +808,5 @@ long (_stdcall *SZRC_MakeTextObject)(long ObjectIndex, long width, long height,
 //    0 = '静态显示',
 //    1 = '闪烁显示'
 // =====================================
-
-HINSTANCE hInstance;
-
-void LED_Initialize(void)
-{
-  if ((hInstance=LoadLibrary(_T("LEDSender2010.dll")))!=NULL)
-  {
-    LED_Startup=(long (_stdcall *)(void))GetProcAddress(hInstance,"LED_Startup");
-    LED_Cleanup=(long (_stdcall *)(void))GetProcAddress(hInstance,"LED_Cleanup");
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //在线控制卡列表相关接口函数
-    LED_Report_CreateServer=(long (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_Report_CreateServer");
-    LED_Report_RemoveServer=(void (_stdcall *)(long))GetProcAddress(hInstance,"LED_Report_RemoveServer");
-    LED_Report_RemoveAllServer=(void (_stdcall *)(void))GetProcAddress(hInstance,"LED_Report_RemoveAllServer");
-    LED_Report_GetOnlineList=(long (_stdcall *)(long, void*, long))GetProcAddress(hInstance,"LED_Report_GetOnlineList");
-    LED_Report_GetOnlineItemName=(char* (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_Report_GetOnlineItemName");
-    LED_Report_GetOnlineItemHost=(char* (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_Report_GetOnlineItemHost");
-    LED_Report_GetOnlineItemPort=(long (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_Report_GetOnlineItemPort");
-    LED_Report_GetOnlineItemAddr=(long (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_Report_GetOnlineItemAddr");
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    LED_ResetDisplay=(long (_stdcall *)(PSenderParam))GetProcAddress(hInstance,"LED_ResetDisplay");
-    LED_AdjustTime=(long (_stdcall *)(PSenderParam))GetProcAddress(hInstance,"LED_AdjustTime");
-    LED_AdjustTimeEx=(long (_stdcall *)(PSenderParam, LPSYSTEMTIME))GetProcAddress(hInstance,"LED_AdjustTimeEx");
-    LED_SetCurChapter=(long (_stdcall *)(PSenderParam, long))GetProcAddress(hInstance,"LED_SetCurChapter");
-    LED_SetPower=(long (_stdcall *)(PSenderParam, long))GetProcAddress(hInstance,"LED_SetPower");
-    LED_GetPower=(long (_stdcall *)(PSenderParam))GetProcAddress(hInstance,"LED_GetPower");
-    LED_SetBright=(long (_stdcall *)(PSenderParam, long))GetProcAddress(hInstance,"LED_SetBright");
-    LED_GetBright=(long (_stdcall *)(PSenderParam))GetProcAddress(hInstance,"LED_GetBright");
-    LED_SetPowerSchedule=(long (_stdcall *)(PSenderParam, PPowerSchedule))GetProcAddress(hInstance,"LED_SetPowerSchedule");
-    LED_GetPowerSchedule=(long (_stdcall *)(PSenderParam))GetProcAddress(hInstance,"LED_GetPowerSchedule");
-    LED_SetBrightSchedule=(long (_stdcall *)(PSenderParam, PBrightSchedule))GetProcAddress(hInstance,"LED_SetBrightSchedule");
-    LED_GetBrightSchedule=(long (_stdcall *)(PSenderParam))GetProcAddress(hInstance,"LED_GetBrightSchedule");
-    LED_SendToScreen=(long (_stdcall *)(PSenderParam, long))GetProcAddress(hInstance,"LED_SendToScreen");
-    LED_ComTransfer=(long (_stdcall *)(PSenderParam, BYTE*, DWORD))GetProcAddress(hInstance,"LED_ComTransfer");
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //此处与之前同名函数功能相同，只是将结构体指针参数拆分成多个变量参数，方便PB、java等开发语言调用
-    LED_UDP_SenderParam=(long (_stdcall *)(long, long, char*, long, long, long, long, long))GetProcAddress(hInstance,"LED_UDP_SenderParam");
-    LED_COM_SenderParam=(long (_stdcall *)(long, long, long, long, long, long, long))GetProcAddress(hInstance,"LED_COM_SenderParam");
-	LED_UDP_SenderParam_ByReportName=(long (_stdcall *)(long, long, long, char*, long, long, long))GetProcAddress(hInstance,"LED_UDP_SenderParam_ByReportName");
-    LED_ResetDisplay2=(long (_stdcall *)(long))GetProcAddress(hInstance,"LED_ResetDisplay2");
-    LED_AdjustTime2=(long (_stdcall *)(long))GetProcAddress(hInstance,"LED_AdjustTime2");
-    LED_AdjustTimeEx2=(long (_stdcall *)(long, LPSYSTEMTIME))GetProcAddress(hInstance,"LED_AdjustTimeEx2");
-    LED_SetCurChapter2=(long (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_SetCurChapter2");
-    LED_SetPower2=(long (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_SetPower2");
-    LED_GetPower2=(long (_stdcall *)(long))GetProcAddress(hInstance,"LED_GetPower2");
-    LED_SetBright2=(long (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_SetBright2");
-    LED_GetBright2=(long (_stdcall *)(long))GetProcAddress(hInstance,"LED_GetBright2");
-    LED_SetPowerSchedule2=(long (_stdcall *)(long, PPowerSchedule))GetProcAddress(hInstance,"LED_SetPowerSchedule2");
-    LED_GetPowerSchedule2=(long (_stdcall *)(long))GetProcAddress(hInstance,"LED_GetPowerSchedule2");
-    LED_SetBrightSchedule2=(long (_stdcall *)(long, PBrightSchedule))GetProcAddress(hInstance,"LED_SetBrightSchedule2");
-    LED_GetBrightSchedule2=(long (_stdcall *)(long))GetProcAddress(hInstance,"LED_GetBrightSchedule2");
-    LED_SendToScreen2=(long (_stdcall *)(long, long))GetProcAddress(hInstance,"LED_SendToScreen2");
-    LED_ComTransfer2=(long (_stdcall *)(long, BYTE*, DWORD))GetProcAddress(hInstance,"LED_ComTransfer2");
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	//读取控制卡参数
-    LED_Cache_GetBoardParam=(long (_stdcall *)(PSenderParam))GetProcAddress(hInstance,"LED_Cache_GetBoardParam");
-    LED_Cache_GetBoardParam2=(long (_stdcall *)(long))GetProcAddress(hInstance,"LED_Cache_GetBoardParam2");
-	//提取各个参数
-    LED_Cache_GetBoardParam_IP=(char* (_stdcall *)(void))GetProcAddress(hInstance,"LED_Cache_GetBoardParam_IP");
-    LED_Cache_GetBoardParam_Mac=(char* (_stdcall *)(void))GetProcAddress(hInstance,"LED_Cache_GetBoardParam_Mac");
-    LED_Cache_GetBoardParam_Addr=(long (_stdcall *)(void))GetProcAddress(hInstance,"LED_Cache_GetBoardParam_Addr");
-    LED_Cache_GetBoardParam_Width=(long (_stdcall *)(void))GetProcAddress(hInstance,"LED_Cache_GetBoardParam_Width");
-    LED_Cache_GetBoardParam_Height=(long (_stdcall *)(void))GetProcAddress(hInstance,"LED_Cache_GetBoardParam_Height");
-    LED_Cache_GetBoardParam_Brightness=(long (_stdcall *)(void))GetProcAddress(hInstance,"LED_Cache_GetBoardParam_Brightness");
-	//修改各个参数
-    LED_Cache_SetBoardParam_IP=(void (_stdcall *)(char*))GetProcAddress(hInstance,"LED_Cache_SetBoardParam_IP");
-    LED_Cache_SetBoardParam_Mac=(void (_stdcall *)(char*))GetProcAddress(hInstance,"LED_Cache_SetBoardParam_Mac");
-    LED_Cache_SetBoardParam_Addr=(void (_stdcall *)(long))GetProcAddress(hInstance,"LED_Cache_SetBoardParam_Addr");
-    LED_Cache_SetBoardParam_Width=(void (_stdcall *)(long))GetProcAddress(hInstance,"LED_Cache_SetBoardParam_Width");
-    LED_Cache_SetBoardParam_Height=(void (_stdcall *)(long))GetProcAddress(hInstance,"LED_Cache_SetBoardParam_Height");
-    LED_Cache_SetBoardParam_Brightness=(void (_stdcall *)(long))GetProcAddress(hInstance,"LED_Cache_SetBoardParam_Brightness");
-	//将修改后的参数接入控制卡
-    LED_Cache_SetBoardParam=(long (_stdcall *)(PSenderParam))GetProcAddress(hInstance,"LED_Cache_SetBoardParam");
-    LED_Cache_SetBoardParam2=(long (_stdcall *)(long))GetProcAddress(hInstance,"LED_Cache_SetBoardParam2");
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    LED_GetNotifyParam=(long (_stdcall *)(PNotifyParam, long))GetProcAddress(hInstance,"LED_GetNotifyParam");
-
-    MakeFromVsqFile=(long (_stdcall *)(char*, long, long, long))GetProcAddress(hInstance,"MakeFromVsqFile");
-    MakeRoot=(long (_stdcall *)(long, long, long))GetProcAddress(hInstance,"MakeRoot");
-    MakeChapter=(long (_stdcall *)(long, long, long, long, DWORD, WORD))GetProcAddress(hInstance,"MakeChapter");
-    MakeRegion=(long (_stdcall *)(long, long, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"MakeRegion");
-    MakeLeaf=(long (_stdcall *)(long, long, long, long, long, long, DWORD, WORD))GetProcAddress(hInstance,"MakeLeaf");
-    MakeObject=(long (_stdcall *)(long, long, long, long, long, long, long))GetProcAddress(hInstance,"MakeObject");
-
-    AddChapter=(long (_stdcall *)(WORD, DWORD, WORD))GetProcAddress(hInstance,"AddChapter");
-    AddRegion=(long (_stdcall *)(WORD, long, long, long, long, long))GetProcAddress(hInstance,"AddRegion");
-    AddLeaf=(long (_stdcall *)(WORD, DWORD, WORD))GetProcAddress(hInstance,"AddLeaf");
-
-    AddDateTime=(long (_stdcall *)(WORD, long, long, long, long, long, long, char*, long, long, long, long, long, long, long, char*))GetProcAddress(hInstance,"AddDateTime");
-	AddCampaignEx=(long (_stdcall *)(WORD, long, long, long, long, long, long, char*, long, long, long, char*, PTimeStamp, PTimeStamp, PTimeStamp, long))GetProcAddress(hInstance,"AddCampaignEx");
-    AddClock=(long (_stdcall *)(WORD, long, long, long, long, long, long, long, DWORD, DWORD, DWORD, long, long, long, DWORD, long, DWORD, long, DWORD, long, DWORD, long, DWORD))GetProcAddress(hInstance,"AddClock");
-    AddMovie=(long (_stdcall *)(WORD, long, long, long, long, long, long, char*, long))GetProcAddress(hInstance,"AddMovie");
-
-    AddWindows=(long (_stdcall *)(WORD, long, long, long, long, long, long))GetProcAddress(hInstance,"AddWindows");
-    AddChildWindow=(long (_stdcall *)(WORD, HDC, long, long, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"AddChildWindow");
-    AddChildPicture=(long (_stdcall *)(WORD, char*, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"AddChildPicture");
-    AddChildText=(long (_stdcall *)(WORD, char*, char*, long, long, long, long, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"AddChildWindow");
-    AddStrings=(long (_stdcall *)(WORD, long, long, long, long, long, long))GetProcAddress(hInstance,"AddStrings");
-    AddChildString=(long (_stdcall *)(WORD, char*, long, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"AddChildString");
-
-    AddWindow=(long (_stdcall *)(WORD, long, long, long, long, long, long, HDC, long, long, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"AddWindow");
-    AddPicture=(long (_stdcall *)(WORD, long, long, long, long, long, long, char*, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"AddPicture");
-    AddText=(long (_stdcall *)(WORD, long, long, long, long, long, long, char*, char*, long, long, long, long, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"AddText");
-    AddString=(long (_stdcall *)(WORD, long, long, long, long, long, long, char*, long, long, long, long, long, long, long, long, long))GetProcAddress(hInstance,"AddString");
-
-	if (LED_Startup) LED_Startup();
-  }
-}
-
-void LED_Destroy(void)
-{
-	if (hInstance!=NULL) 
-	{
-		LED_Cleanup();
-		FreeLibrary(hInstance);
-	}
-}
 
 #endif

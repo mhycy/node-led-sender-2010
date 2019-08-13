@@ -4,7 +4,14 @@
   "description": "NodeJS wrapper for LEDSender2010.dll",
   "main": "index.js",
   "scripts": {
-    "install": "node-gyp rebuild"
+    "start": "node index.js",
+    "build:dev": "node-gyp build --debug",
+    "build": "node-gyp build",
+    "rebuild:dev": "node-gyp rebuild --debug",
+    "rebuild": "node-gyp rebuild",
+    "clean": "node-gyp clean",
+
+    "test": "node ./test/test.js"
   },
   "author": "mhycy",
   "license": "ISC",
@@ -13,5 +20,5 @@
     "bindings": "^1.5.0"
   },
   "os" : [ "win32" ],
-  "cpu": [ "x86", "x64" ]
+  "cpu": [ "x86" ]
 }

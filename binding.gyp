@@ -1,26 +1,47 @@
 {
   "targets": [
     {
-      "target_name": "LEDSender2010",
+      "target_name": "LEDSender2010Wrapper",
       "sources": [ "src/wrapper.cc" ],
       'conditions': [
         ['OS=="win"', {
+            "libraries": [
+              "../third_party/LEDSender2010.lib"
+            ],
+            'include_dirs': [
+              'third_party/include'
+            ],
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
                 'third_party/LEDSender2010.dll',
                 'third_party/Lzss.dll'
               ]
-            }],
-            'include_dirs': [
-              'third_party/include'
-            ]
+            }]
         }]
       ]
     },
     {
-      "target_name": "demo",
-      "sources": [ "src/demo.cc" ]
+      "target_name": "test",
+      "sources": [ "src/test.cc" ],
+      'conditions': [
+        ['OS=="win"', {
+            "libraries": [
+              "../third_party/LEDSender2010.lib"
+            ],
+            'include_dirs': [
+              'third_party/include',
+              'src/include'
+            ],
+            'copies': [{
+              'destination': '<(PRODUCT_DIR)',
+              'files': [
+                'third_party/LEDSender2010.dll',
+                'third_party/Lzss.dll'
+              ]
+            }]
+        }]
+      ]
     }
   ]
 }
