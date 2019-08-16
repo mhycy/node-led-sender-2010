@@ -2,10 +2,17 @@ extern "C" {
 #include <windows.h>
 #include <tchar.h>
 
+#pragma comment(lib, "LEDSender2010.lib")
+
 #include <node_api.h>
-// #include "LEDSender2010Wrapper.h"
+// #include "LEDSender2010.h"
 
 #define WM_LED_NOTIFY          1025
+
+#define DEVICE_TYPE_COM    0  //串口通讯
+#define DEVICE_TYPE_UDP    1  //网络通讯
+#define DEVICE_TYPE_485    2  //485通讯
+
 //是否等待下位机应答，直接发送所有数据
 #define NOTIFY_NONE        1
 //是否阻塞方式；是则等到发送完成或者超时，才返回；否则立即返回
@@ -38,6 +45,7 @@ typedef struct SENDER_PARAM{
   long  notifyMode;
 }TSenderParam, *PSenderParam;
 
+
 namespace LEDSender2010Wrapper {
     napi_value Test(napi_env env, napi_callback_info args) {
         // Node 相关声明
@@ -48,6 +56,8 @@ namespace LEDSender2010Wrapper {
         memset(&SenderParam, 0, sizeof(TSenderParam));
 
         // 设定目标IP
+        SenderParam.devParam.devType = DEVICE_TYPE_UDP;
+
         strcpy(SenderParam.devParam.rmtHost, "192.168.1.56");
         SenderParam.devParam.rmtPort = 6666;
         SenderParam.devParam.locPort = 8881;
@@ -84,16 +94,15 @@ namespace LEDSender2010Wrapper {
 
         try {
             // 声明
-            __declspec(dllimport) long LED_GetBright(TDeviceParam param);
+            long __stdcall LED_SetBright(PSenderParam, long);
             long result = 100;
-            
-            result = LED_GetBright(&SenderParam);
+            result = LED_SetBright(&SenderParam, 7);
 
             status = napi_create_int32(env, result, &return_value);
             if (status != napi_ok) { return nullptr; }
         } catch(...) {
-            status = napi_create_int32(env, GetLastError(), &return_value);
-            if (status != napi_ok) { return nullptr; }
+            //status = napi_create_int32(env, GetLastError(), &return_value);
+            //if (status != napi_ok) { return nullptr; }
         }
         return return_value;
     }

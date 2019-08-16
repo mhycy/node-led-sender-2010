@@ -1,208 +1,207 @@
-#ifndef __LEDSENDER2010_WRAPPER__
-#define __LEDSENDER2010_WRAPPER__
+#ifndef __ledsender__
+#define __ledsender__
 
-/*
-   参数说明
-   
-*/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <windows.h>
-#include <tchar.h>
 
-#define WM_LED_NOTIFY          1025
+#define WM_LED_NOTIFY WM_USER + 1;
+#define NOTIFY_BUFFER_LEN 512
 
 //缺省数据包大小
-#define DEFAULT_PKP_LENGTH     512
+#define DEFAULT_PKP_LENGTH 512
 
-//IP地址、MAC地址长度定义
-#define IP_ADDRESS_LENGTH      4
-#define ETHER_ADDRESS_LENGTH   6
+// IP地址、MAC地址长度定义
+#define IP_ADDRESS_LENGTH 4
+#define ETHER_ADDRESS_LENGTH 6
 
 //通讯设备类型
-#define DEVICE_TYPE_COM    0  //串口通讯
-#define DEVICE_TYPE_UDP    1  //网络通讯
-#define DEVICE_TYPE_485    2  //485通讯
+#define DEVICE_TYPE_COM 0  //串口通讯
+#define DEVICE_TYPE_UDP 1  //网络通讯
+#define DEVICE_TYPE_485 2  // 485通讯
 
 //串口或者485通讯使用得通讯速度(波特率)
-#define SBR_57600          0
-#define SBR_38400          1
-#define SBR_19200          2
-#define SBR_9600           3
+#define SBR_57600 0
+#define SBR_38400 1
+#define SBR_19200 2
+#define SBR_9600 3
 
 //是否等待下位机应答，直接发送所有数据
-#define NOTIFY_NONE        1
+#define NOTIFY_NONE 1
 //是否阻塞方式；是则等到发送完成或者超时，才返回；否则立即返回
-#define NOTIFY_BLOCK       2
+#define NOTIFY_BLOCK 2
 //是否将发送结果以Windows窗体消息方式送到调用得应用
-#define NOTIFY_EVENT       4
+#define NOTIFY_EVENT 4
 
-#define R_DEVICE_READY     0
-#define R_DEVICE_INVALID   -1
-#define R_DEVICE_BUSY      -2
-#define R_FONTSET_INVALID  -3
-#define R_DLL_INIT_IVALID  -4
-#define R_IGNORE_RESPOND   -5
+#define R_DEVICE_READY 0
+#define R_DEVICE_INVALID -1
+#define R_DEVICE_BUSY -2
+#define R_FONTSET_INVALID -3
+#define R_DLL_INIT_IVALID -4
+#define R_IGNORE_RESPOND -5
 
-//Chapter和Leaf中，播放时间控制
-#define WAIT_USE_TIME      0  //按照指定的时间长度播放，到时间就切到下一个
-#define WAIT_CHILD         1  //等待子项目的播放，如果到了指定的时间长度，而子项目还没有播完，则等待播完
+// Chapter和Leaf中，播放时间控制
+#define WAIT_USE_TIME 0  //按照指定的时间长度播放，到时间就切到下一个
+#define WAIT_CHILD \
+  1  //等待子项目的播放，如果到了指定的时间长度，而子项目还没有播完，则等待播完
 
-#define V_FALSE            0
-#define V_TRUE             1
+#define V_FALSE 0
+#define V_TRUE 1
 
 //显示屏基色类型
-#define COLOR_MODE_MONO              1  //单色
-#define COLOR_MODE_DOUBLE            2  //双色
-#define COLOR_MODE_FULLCOLOR_16BIT   3  //16位全彩
-#define COLOR_MODE_FULLCOLOR_32BIT   4  //16位全彩
+#define COLOR_MODE_MONO 1             //单色
+#define COLOR_MODE_DOUBLE 2           //双色
+#define COLOR_MODE_FULLCOLOR_16BIT 3  // 16位全彩
+#define COLOR_MODE_FULLCOLOR_32BIT 4  // 16位全彩
 
 //显示数据命令
-#define ROOT_UPDATE            0x13  //更新下位机程序
-#define ROOT_FONTSET           0x14  //下载字库
-#define ROOT_PLAY              0x21  //节目数据，保存到RAM，掉电丢失
-#define ROOT_DOWNLOAD          0x22  //节目数据，保存到Flash
-#define ROOT_PLAY_CHAPTER      0x23  //插入或者更新某一节目
-#define ROOT_PLAY_REGION       0x25  //插入或者更新某一分区
-#define ROOT_PLAY_LEAF         0x27  //插入或者更新某一页面
-#define ROOT_PLAY_OBJECT       0x29  //插入或者更新某一对象
+#define ROOT_UPDATE 0x13        //更新下位机程序
+#define ROOT_FONTSET 0x14       //下载字库
+#define ROOT_PLAY 0x21          //节目数据，保存到RAM，掉电丢失
+#define ROOT_DOWNLOAD 0x22      //节目数据，保存到Flash
+#define ROOT_PLAY_CHAPTER 0x23  //插入或者更新某一节目
+#define ROOT_PLAY_REGION 0x25   //插入或者更新某一分区
+#define ROOT_PLAY_LEAF 0x27     //插入或者更新某一页面
+#define ROOT_PLAY_OBJECT 0x29   //插入或者更新某一对象
 
-#define ACTMODE_INSERT         0  //插入操作
-#define ACTMODE_REPLACE        1  //替换操作
+#define ACTMODE_INSERT 0   //插入操作
+#define ACTMODE_REPLACE 1  //替换操作
 
-//RAM节目播放
-#define ROOT_SURVIVE_ALWAYS    -1
+// RAM节目播放
+#define ROOT_SURVIVE_ALWAYS -1
 
-//Windows字体类型定义
-#define WFS_NONE               0x0   //普通样式
-#define WFS_BOLD               0x01  //粗体
-#define WFS_ITALIC             0x02  //斜体
-#define WFS_UNDERLINE          0x04  //下划线
-#define WFS_STRIKEOUT          0x08  //删除线
+// Windows字体类型定义
+#define WFS_NONE 0x0        //普通样式
+#define WFS_BOLD 0x01       //粗体
+#define WFS_ITALIC 0x02     //斜体
+#define WFS_UNDERLINE 0x04  //下划线
+#define WFS_STRIKEOUT 0x08  //删除线
 
 //流控制常量
-#define FLOW_NONE          0
-#define FLOW_RTS_CTS       1
+#define FLOW_NONE 0
+#define FLOW_RTS_CTS 1
 
 //下位机应答标识
-#define LM_RX_COMPLETE         1
-#define LM_TX_COMPLETE         2
-#define LM_RESPOND             3
-#define LM_TIMEOUT             4
-#define LM_NOTIFY              5
-#define LM_PARAM               6
-#define LM_TX_PROGRESS         7
-#define LM_RX_PROGRESS         8
-#define RESULT_FLASH           0xff
+#define LM_RX_COMPLETE 1
+#define LM_TX_COMPLETE 2
+#define LM_RESPOND 3
+#define LM_TIMEOUT 4
+#define LM_NOTIFY 5
+#define LM_PARAM 6
+#define LM_TX_PROGRESS 7
+#define LM_RX_PROGRESS 8
+#define RESULT_FLASH 0xff
 
 //电源开关状态
-#define LED_POWER_ON       1
-#define LED_POWER_OFF      0
+#define LED_POWER_ON 1
+#define LED_POWER_OFF 0
 
 //内码文字大小
-#define FONT_SET_16        0      //16点阵字符
-#define FONT_SET_24        1      //24点阵字符
-  
+#define FONT_SET_16 0  // 16点阵字符
+#define FONT_SET_24 1  // 24点阵字符
+
 //正计时、倒计时type参数
-#define CT_COUNTUP         0      //正计时
-#define CT_COUNTDOWN       1      //倒计时
+#define CT_COUNTUP 0    //正计时
+#define CT_COUNTDOWN 1  //倒计时
 //正计时、倒计时format参数
-#define CF_HNS             0      //时分秒（相对值）
-#define CF_HN              1      //时分（相对值）
-#define CF_NS              2      //分秒（相对值）
-#define CF_H               3      //时（相对值）
-#define CF_N               4      //分（相对值）
-#define CF_S               5      //秒（相对值）
-#define CF_DAY             6      //天数（绝对数量）
-#define CF_HOUR            7      //小时数（绝对数量）
-#define CF_MINUTE          8      //分钟数（绝对数量）
-#define CF_SECOND          9      //秒数（绝对数量）
+#define CF_HNS 0     //时分秒（相对值）
+#define CF_HN 1      //时分（相对值）
+#define CF_NS 2      //分秒（相对值）
+#define CF_H 3       //时（相对值）
+#define CF_N 4       //分（相对值）
+#define CF_S 5       //秒（相对值）
+#define CF_DAY 6     //天数（绝对数量）
+#define CF_HOUR 7    //小时数（绝对数量）
+#define CF_MINUTE 8  //分钟数（绝对数量）
+#define CF_SECOND 9  //秒数（绝对数量）
 
 //模拟时钟边框形状
-#define SHAPE_RECTANGLE    0      //方形
-#define SHAPE_ROUNDRECT    1      //圆角方形
-#define SHAPE_CIRCLE       2      //圆形
+#define SHAPE_RECTANGLE 0  //方形
+#define SHAPE_ROUNDRECT 1  //圆角方形
+#define SHAPE_CIRCLE 2     //圆形
 
 //命令代码定义
-#define PKC_RESPOND               3
-#define PKC_QUERY                 4
-#define PKC_OVERFLOW              5
-#define PKC_ADJUST_TIME           6
-#define PKC_GET_PARAM             7
-#define PKC_SET_PARAM             8
-#define PKC_GET_POWER             9
-#define PKC_SET_POWER             10
-#define PKC_GET_BRIGHT            11
-#define PKC_SET_BRIGHT            12
-#define PKC_COM_TRANSFER          21
-#define PKC_GET_POWER_SCHEDULE    60
-#define PKC_SET_POWER_SCHEDULE    61
-#define PKC_GET_BRIGHT_SCHEDULE   62
-#define PKC_SET_BRIGHT_SCHEDULE   63
-#define PKC_SET_CURRENT_CHAPTER   66
-#define PKC_NOTIFY                100
-#define PKC_MODIFY_IP             7654
-#define PKC_MODIFY_MAC            7655
+#define PKC_RESPOND 3
+#define PKC_QUERY 4
+#define PKC_OVERFLOW 5
+#define PKC_ADJUST_TIME 6
+#define PKC_GET_PARAM 7
+#define PKC_SET_PARAM 8
+#define PKC_GET_POWER 9
+#define PKC_SET_POWER 10
+#define PKC_GET_BRIGHT 11
+#define PKC_SET_BRIGHT 12
+#define PKC_COM_TRANSFER 21
+#define PKC_GET_POWER_SCHEDULE 60
+#define PKC_SET_POWER_SCHEDULE 61
+#define PKC_GET_BRIGHT_SCHEDULE 62
+#define PKC_SET_BRIGHT_SCHEDULE 63
+#define PKC_SET_CURRENT_CHAPTER 66
+#define PKC_NOTIFY 100
+#define PKC_MODIFY_IP 7654
+#define PKC_MODIFY_MAC 7655
 
-#define NOTIFY_BUFFER_LEN		  512
+typedef struct TIMESTAMP {
+  long date;
+  long time;
+} TTimeStamp, *PTimeStamp;
 
-typedef struct TIMESTAMP{
-  long   date;
-  long   time;
-}TTimeStamp, *PTimeStamp;
-
-typedef struct DEVICE_PARAM{
-  WORD  devType;
-  WORD  comSpeed;
-  WORD  comPort;
-  WORD  comFlow;
-  WORD  locPort;
-  WORD  rmtPort;
-  WORD  srcAddr;
-  WORD  dstAddr;
-  char  rmtHost[16];
-  DWORD txTimeo;   //发送后等待应答时间 ====超时时间应为txTimeo*txRepeat
-  DWORD txRepeat;  //失败重发次数
-  DWORD txMovewin; //划动窗口
+typedef struct DEVICE_PARAM {
+  WORD devType;
+  WORD comSpeed;
+  WORD comPort;
+  WORD comFlow;
+  WORD locPort;
+  WORD rmtPort;
+  WORD srcAddr;
+  WORD dstAddr;
+  char rmtHost[16];
+  DWORD txTimeo;  //发送后等待应答时间 ====超时时间应为txTimeo*txRepeat
+  DWORD txRepeat;   //失败重发次数
+  DWORD txMovewin;  //划动窗口
   DWORD key;
-  long  pkpLength; //数据包大小
-}TDeviceParam, *PDeviceParam;
+  long pkpLength;  //数据包大小
+} TDeviceParam, *PDeviceParam;
 
-typedef struct SENDER_PARAM{
+typedef struct SENDER_PARAM {
   TDeviceParam devParam;
-  long  wmHandle;
-  long  wmMessage;
-  long  wmLParam;
-  long  notifyMode;
-}TSenderParam, *PSenderParam;
+  long wmHandle;
+  long wmMessage;
+  long wmLParam;
+  long notifyMode;
+} TSenderParam, *PSenderParam;
 
-typedef struct NOTIFY_PARAM{
-  WORD  Notify;
-  WORD  Command;
-  long  Result;
-  long  Status;
+typedef struct NOTIFY_PARAM {
+  WORD Notify;
+  WORD Command;
+  long Result;
+  long Status;
   TSenderParam Param;
-  BYTE  Buffer[NOTIFY_BUFFER_LEN];
+  BYTE Buffer[NOTIFY_BUFFER_LEN];
   DWORD Size;
-}TNotifyParam, *PNotifyParam;
+} TNotifyParam, *PNotifyParam;
 
-typedef struct POWER_SCHEDULE{
+typedef struct POWER_SCHEDULE {
   DWORD Enabled;
   DWORD Mode;
   TTimeStamp OpenTime[21];
   TTimeStamp CloseTime[21];
   DWORD Checksum;
-}TPowerSchedule, *PPowerSchedule;
+} TPowerSchedule, *PPowerSchedule;
 
-typedef struct BRIGHT_SCHEDULE{
+typedef struct BRIGHT_SCHEDULE {
   DWORD Enabled;
-  BYTE  Bright[24];
+  BYTE Bright[24];
   DWORD Checksum;
-}TBrightSchedule, *PBrightSchedule;
+} TBrightSchedule, *PBrightSchedule;
 
 //动态链接库初始化
-long (_stdcall *LED_Startup)(void);
+__declspec(dllimport) long __stdcall LED_Startup(void);
 
 //动态链接库销毁
-long (_stdcall *LED_Cleanup)(void);
+__declspec(dllimport) long __stdcall LED_Cleanup(void);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,31 +209,32 @@ long (_stdcall *LED_Cleanup)(void);
 /* 在线控制卡列表相关接口函数                                           */
 /************************************************************************/
 
-typedef struct DEVINFO{
-	char  dev_name[32];  //设备名称
-	DWORD dev_id;        //设备标识
-	DWORD dev_ip;        //设备IP地址
-	WORD  dev_addr;      //设备地址
-	WORD  dev_port;      //设备端口
-	DWORD reserved[5];   //系统保留
-}TDevInfo, *PDevInfo;
+typedef struct DEVINFO {
+  char dev_name[32];  //设备名称
+  DWORD dev_id;       //设备标识
+  DWORD dev_ip;       //设备IP地址
+  WORD dev_addr;      //设备地址
+  WORD dev_port;      //设备端口
+  DWORD reserved[5];  //系统保留
+} TDevInfo, *PDevInfo;
 
-typedef struct DEVICEREPORT{
-	TDevInfo devinfo;    //设备信息
-	double   timeupdate; //最后刷新时间
-}TDeviceReport, *PDeviceReport;
+typedef struct DEVICEREPORT {
+  TDevInfo devinfo;   //设备信息
+  double timeupdate;  //最后刷新时间
+} TDeviceReport, *PDeviceReport;
 
 //创建控制卡在线监听服务
 //  serverindex 控制卡在线监听服务编号(可以在多个socket udp端口监听)
 //  localport 本地端口
-long (_stdcall *LED_Report_CreateServer)(long serverindex, long localport);
+__declspec(dllimport) long __stdcall LED_Report_CreateServer(long serverindex,
+                                                             long localport);
 
 //删除控制卡在线监听服务
 //  serverindex 控制卡在线监听服务编号
-void (_stdcall *LED_Report_RemoveServer)(long serverindex);
+__declspec(dllimport) void __stdcall LED_Report_RemoveServer(long serverindex);
 
 //删除全部控制卡在线监听服务
-void (_stdcall *LED_Report_RemoveAllServer)(void);
+__declspec(dllimport) void __stdcall LED_Report_RemoveAllServer(void);
 
 //获得控制卡在线列表
 //必须先创建控制卡在线监听服务，即调用LED_Report_CreateServer后使用，否则返回值无效
@@ -242,36 +242,43 @@ void (_stdcall *LED_Report_RemoveAllServer)(void);
 //  plist 输出在线列表的用户外部缓冲区，
 //        如果传入空(NULL/0)，则输出到动态链接库内部的缓冲区，继续调用下面的接口取得详细信息
 //  count 最大读取个数
-//--返回值-- 小于0表示失败(未创建该在线监听服务)，大于等于0表示在线的控制卡数量
-long (_stdcall *LED_Report_GetOnlineList)(long serverindex, void* plist, long count);
+//--返回值--
+//小于0表示失败(未创建该在线监听服务)，大于等于0表示在线的控制卡数量
+__declspec(dllimport) long __stdcall LED_Report_GetOnlineList(long serverindex,
+                                                              void *plist,
+                                                              long count);
 
 //获得某个在线控制卡的上报控制卡名称
 //必须先创建控制卡在线监听服务，即调用LED_Report_CreateServer后使用，否则返回值无效
 //  serverindex 控制卡在线监听服务编号
 //  itemindex 该监听服务的在线列表中，在线控制卡的编号
 //--返回值-- 在线控制卡的上报控制卡名称
-char* (_stdcall *LED_Report_GetOnlineItemName)(long serverindex, long itemindex);
+__declspec(dllimport) char *__stdcall LED_Report_GetOnlineItemName(
+    long serverindex, long itemindex);
 
 //获得某个在线控制卡的上报控制卡IP地址
 //必须先创建控制卡在线监听服务，即调用LED_Report_CreateServer后使用，否则返回值无效
 //  serverindex 控制卡在线监听服务编号
 //  itemindex 该监听服务的在线列表中，在线控制卡的编号
 //--返回值-- 在线控制卡的IP地址
-char* (_stdcall *LED_Report_GetOnlineItemHost)(long serverindex, long itemindex);
+__declspec(dllimport) char *__stdcall LED_Report_GetOnlineItemHost(
+    long serverindex, long itemindex);
 
 //获得某个在线控制卡的上报控制卡远程UDP端口号
 //必须先创建控制卡在线监听服务，即调用LED_Report_CreateServer后使用，否则返回值无效
 //  serverindex 控制卡在线监听服务编号
 //  itemindex 该监听服务的在线列表中，在线控制卡的编号
 //--返回值-- 在线控制卡的远程UDP端口号
-long (_stdcall *LED_Report_GetOnlineItemPort)(long serverindex, long itemindex);
+__declspec(dllimport) long __stdcall LED_Report_GetOnlineItemPort(
+    long serverindex, long itemindex);
 
 //获得某个在线控制卡的上报控制卡地址
 //必须先创建控制卡在线监听服务，即调用LED_Report_CreateServer后使用，否则返回值无效
 //  serverindex 控制卡在线监听服务编号
 //  itemindex 该监听服务的在线列表中，在线控制卡的编号
 //--返回值-- 在线控制卡的硬件地址
-long (_stdcall *LED_Report_GetOnlineItemAddr)(long serverindex, long itemindex);
+__declspec(dllimport) long __stdcall LED_Report_GetOnlineItemAddr(
+    long serverindex, long itemindex);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,7 +296,9 @@ long (_stdcall *LED_Report_GetOnlineItemAddr)(long serverindex, long itemindex);
 //  wmhandle 接收消息窗体句柄
 //  wmmessage 接收消息的消息号
 //--返回值-- 小于0表示失败，大于等于0表示参数的id号
-long (_stdcall *LED_UDP_SenderParam)(long index, long localport, char* host, long remoteport, long address, long notifymode, long wmhandle, long wmmessage);
+__declspec(dllimport) long __stdcall LED_UDP_SenderParam(
+    long index, long localport, char *host, long remoteport, long address,
+    long notifymode, long wmhandle, long wmmessage);
 
 //填写串口通讯参数，供发送时使用
 //  index 参数数组编号
@@ -300,7 +309,9 @@ long (_stdcall *LED_UDP_SenderParam)(long index, long localport, char* host, lon
 //  wmhandle 接收消息窗体句柄
 //  wmmessage 接收消息的消息号
 //--返回值-- 小于0表示失败，大于等于0表示参数的id号
-long (_stdcall *LED_COM_SenderParam)(long index, long comport, long baudrate, long address, long notifymode, long wmhandle, long wmmessage);
+__declspec(dllimport) long __stdcall LED_COM_SenderParam(
+    long index, long comport, long baudrate, long address, long notifymode,
+    long wmhandle, long wmmessage);
 
 //填写网络通讯参数，供发送时使用
 //  index 参数数组编号
@@ -311,66 +322,88 @@ long (_stdcall *LED_COM_SenderParam)(long index, long comport, long baudrate, lo
 //  wmhandle 接收消息窗体句柄
 //  wmmessage 接收消息的消息号
 //--返回值-- 小于0表示失败，大于等于0表示参数的id号
-long (_stdcall *LED_UDP_SenderParam_ByReportName)(long index, long localport, long serverindex, char* name, long notifymode, long wmhandle, long wmmessage);
+__declspec(dllimport) long __stdcall LED_UDP_SenderParam_ByReportName(
+    long index, long localport, long serverindex, char *name, long notifymode,
+    long wmhandle, long wmmessage);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //复位控制卡节目播放，重新显示控制卡Flash中存储的节目
-long (_stdcall *LED_ResetDisplay)(PSenderParam param);
-long (_stdcall *LED_ResetDisplay2)(long senderparam_index);
+__declspec(dllimport) long __stdcall LED_ResetDisplay(PSenderParam param);
+__declspec(dllimport) long __stdcall LED_ResetDisplay2(long senderparam_index);
 
 //校正时间，以当前计算机的系统时间校正控制卡的时钟
-long (_stdcall *LED_AdjustTime)(PSenderParam param);
-long (_stdcall *LED_AdjustTime2)(long senderparam_index);
+__declspec(dllimport) long __stdcall LED_AdjustTime(PSenderParam param);
+__declspec(dllimport) long __stdcall LED_AdjustTime2(long senderparam_index);
 
 //校正时间扩展，以指定的时间校正控制卡的时钟
-long (_stdcall *LED_AdjustTimeEx)(PSenderParam param, LPSYSTEMTIME time);
-long (_stdcall *LED_AdjustTimeEx2)(long senderparam_index, LPSYSTEMTIME time);
+__declspec(dllimport) long __stdcall LED_AdjustTimeEx(PSenderParam param,
+                                                      LPSYSTEMTIME time);
+__declspec(dllimport) long __stdcall LED_AdjustTimeEx2(long senderparam_index,
+                                                       LPSYSTEMTIME time);
 
 //设置当前显示的节目
-long (_stdcall *LED_SetCurChapter)(PSenderParam param, long value);
-long (_stdcall *LED_SetCurChapter2)(long senderparam_index, long value);
+__declspec(dllimport) long __stdcall LED_SetCurChapter(PSenderParam param,
+                                                       long value);
+__declspec(dllimport) long __stdcall LED_SetCurChapter2(long senderparam_index,
+                                                        long value);
 
-//设置控制卡电源 value=LED_POWER_ON表示开启电源 value=LED_POWER_OFF表示关闭电源
-long (_stdcall *LED_SetPower)(PSenderParam param, long value);
-long (_stdcall *LED_SetPower2)(long senderparam_index, long value);
+//设置控制卡电源 value=LED_POWER_ON表示开启电源
+// value=LED_POWER_OFF表示关闭电源
+__declspec(dllimport) long __stdcall LED_SetPower(PSenderParam param,
+                                                  long value);
+__declspec(dllimport) long __stdcall LED_SetPower2(long senderparam_index,
+                                                   long value);
 
 //串口转发数据
-long (_stdcall *LED_ComTransfer)(PSenderParam param, BYTE* buffer, DWORD size);
-long (_stdcall *LED_ComTransfer2)(long senderparam_index, BYTE* buffer, DWORD size);
+__declspec(dllimport) long __stdcall LED_ComTransfer(PSenderParam param,
+                                                     BYTE *buffer, DWORD size);
+__declspec(dllimport) long __stdcall LED_ComTransfer2(long senderparam_index,
+                                                      BYTE *buffer, DWORD size);
 
 //读取控制卡电源状态
-long (_stdcall *LED_GetPower)(PSenderParam param);
-long (_stdcall *LED_GetPower2)(long senderparam_index);
+__declspec(dllimport) long __stdcall LED_GetPower(PSenderParam param);
+__declspec(dllimport) long __stdcall LED_GetPower2(long senderparam_index);
 
 //设置控制卡亮度 value取值范围0-7
-long (_stdcall *LED_SetBright)(PSenderParam param, long value);
-long (_stdcall *LED_SetBright2)(long senderparam_index, long value);
+__declspec(dllimport) long __stdcall LED_SetBright(PSenderParam param,
+                                                   long value);
+__declspec(dllimport) long __stdcall LED_SetBright2(long senderparam_index,
+                                                    long value);
 
 //读取控制卡亮度
-long (_stdcall *LED_GetBright)(PSenderParam param);
-long (_stdcall *LED_GetBright2)(long senderparam_index);
+__declspec(dllimport) long __stdcall LED_GetBright(PSenderParam param);
+__declspec(dllimport) long __stdcall LED_GetBright2(long senderparam_index);
 
 //设置控制卡的定时开关屏计划
-long (_stdcall *LED_SetPowerSchedule)(PSenderParam param, PPowerSchedule value);
-long (_stdcall *LED_SetPowerSchedule2)(long senderparam_index, PPowerSchedule value);
+__declspec(dllimport) long __stdcall LED_SetPowerSchedule(PSenderParam param,
+                                                          PPowerSchedule value);
+__declspec(dllimport) long __stdcall LED_SetPowerSchedule2(
+    long senderparam_index, PPowerSchedule value);
 
 //读取控制卡的定时开关屏计划
-long (_stdcall *LED_GetPowerSchedule)(PSenderParam param);
-long (_stdcall *LED_GetPowerSchedule2)(long senderparam_index);
+__declspec(dllimport) long __stdcall LED_GetPowerSchedule(PSenderParam param);
+__declspec(dllimport) long __stdcall LED_GetPowerSchedule2(
+    long senderparam_index);
 
 //设置控制卡的定时亮度调节计划
-long (_stdcall *LED_SetBrightSchedule)(PSenderParam param, PBrightSchedule value);
-long (_stdcall *LED_SetBrightSchedule2)(long senderparam_index, PBrightSchedule value);
+__declspec(dllimport) long __stdcall LED_SetBrightSchedule(
+    PSenderParam param, PBrightSchedule value);
+__declspec(dllimport) long __stdcall LED_SetBrightSchedule2(
+    long senderparam_index, PBrightSchedule value);
 
 //读取控制卡的定时亮度调节计划
-long (_stdcall *LED_GetBrightSchedule)(PSenderParam param);
-long (_stdcall *LED_GetBrightSchedule2)(long senderparam_index);
+__declspec(dllimport) long __stdcall LED_GetBrightSchedule(PSenderParam param);
+__declspec(dllimport) long __stdcall LED_GetBrightSchedule2(
+    long senderparam_index);
 
-//发送节目数据 index为MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject函数的返回值
-long (_stdcall *LED_SendToScreen)(PSenderParam param, long index);
-long (_stdcall *LED_SendToScreen2)(long senderparam_index, long index);
+//发送节目数据
+// index为MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject函数的返回值
+__declspec(dllimport) long __stdcall LED_SendToScreen(PSenderParam param,
+                                                      long index);
+__declspec(dllimport) long __stdcall LED_SendToScreen2(long senderparam_index,
+                                                       long index);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 用于对控制卡进行一些参数设置
@@ -379,31 +412,37 @@ long (_stdcall *LED_SendToScreen2)(long senderparam_index, long index);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //读取控制卡参数
-long (_stdcall *LED_Cache_GetBoardParam)(PSenderParam param);
-long (_stdcall *LED_Cache_GetBoardParam2)(long senderparam_index);
+__declspec(dllimport) long __stdcall LED_Cache_GetBoardParam(
+    PSenderParam param);
+__declspec(dllimport) long __stdcall LED_Cache_GetBoardParam2(
+    long senderparam_index);
 //提取各个参数
-char* (_stdcall *LED_Cache_GetBoardParam_IP)(void);
-char* (_stdcall *LED_Cache_GetBoardParam_Mac)(void);
-long (_stdcall *LED_Cache_GetBoardParam_Addr)(void);
-long (_stdcall *LED_Cache_GetBoardParam_Width)(void);
-long (_stdcall *LED_Cache_GetBoardParam_Height)(void);
-long (_stdcall *LED_Cache_GetBoardParam_Brightness)(void);
+__declspec(dllimport) char *__stdcall LED_Cache_GetBoardParam_IP(void);
+__declspec(dllimport) char *__stdcall LED_Cache_GetBoardParam_Mac(void);
+__declspec(dllimport) long __stdcall LED_Cache_GetBoardParam_Addr(void);
+__declspec(dllimport) long __stdcall LED_Cache_GetBoardParam_Width(void);
+__declspec(dllimport) long __stdcall LED_Cache_GetBoardParam_Height(void);
+__declspec(dllimport) long __stdcall LED_Cache_GetBoardParam_Brightness(void);
 //修改各个参数
-void (_stdcall *LED_Cache_SetBoardParam_IP)(char* value);
-void (_stdcall *LED_Cache_SetBoardParam_Mac)(char* value);
-void (_stdcall *LED_Cache_SetBoardParam_Addr)(long value);
-void (_stdcall *LED_Cache_SetBoardParam_Width)(long value);
-void (_stdcall *LED_Cache_SetBoardParam_Height)(long value);
-void (_stdcall *LED_Cache_SetBoardParam_Brightness)(long value);
+__declspec(dllimport) void __stdcall LED_Cache_SetBoardParam_IP(char *value);
+__declspec(dllimport) void __stdcall LED_Cache_SetBoardParam_Mac(char *value);
+__declspec(dllimport) void __stdcall LED_Cache_SetBoardParam_Addr(long value);
+__declspec(dllimport) void __stdcall LED_Cache_SetBoardParam_Width(long value);
+__declspec(dllimport) void __stdcall LED_Cache_SetBoardParam_Height(long value);
+__declspec(dllimport) void __stdcall LED_Cache_SetBoardParam_Brightness(
+    long value);
 //将修改后的参数接入控制卡
-long (_stdcall *LED_Cache_SetBoardParam)(PSenderParam param);
-long (_stdcall *LED_Cache_SetBoardParam2)(long senderparam_index);
+__declspec(dllimport) long __stdcall LED_Cache_SetBoardParam(
+    PSenderParam param);
+__declspec(dllimport) long __stdcall LED_Cache_SetBoardParam2(
+    long senderparam_index);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //获取控制卡应答结果的数据
-long (_stdcall *LED_GetNotifyParam)(PNotifyParam notify, long index);
+__declspec(dllimport) long __stdcall LED_GetNotifyParam(PNotifyParam notify,
+                                                        long index);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -439,17 +478,24 @@ long (_stdcall *LED_GetNotifyParam)(PNotifyParam notify, long index);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //生成播放数据（从VisionShow软件编辑的Vsq文件载入，并生成要下发的节目数据）
-//  RootType 为播放类型；=ROOT_PLAY表示更新控制卡RAM中的节目(掉电丢失)；=ROOT_DOWNLOAD表示更新控制卡Flash中的节目(掉电不丢失)
+//  RootType
+//  为播放类型；=ROOT_PLAY表示更新控制卡RAM中的节目(掉电丢失)；=ROOT_DOWNLOAD表示更新控制卡Flash中的节目(掉电不丢失)
 //  ColorMode 为颜色模式；取值为COLOR_MODE_MONO或者COLOR
-//  survive 为RAM节目生存时间，在RootType=ROOT_PLAY时有效，当RAM节目播放达到时间后，恢复显示FLASH中的节目
+//  survive
+//  为RAM节目生存时间，在RootType=ROOT_PLAY时有效，当RAM节目播放达到时间后，恢复显示FLASH中的节目
 //  filename 由VisionShow软件编辑的节目文件
-long (_stdcall *MakeFromVsqFile)(char* filename, long RootType, long ColorMode, long survive/* = ROOT_SURVIVE_ALWAYS*/);
+__declspec(dllimport) long __stdcall MakeFromVsqFile(
+    char *filename, long RootType, long ColorMode,
+    long survive /* = ROOT_SURVIVE_ALWAYS*/);
 
 //生成播放数据
-//  RootType 为播放类型；=ROOT_PLAY表示更新控制卡RAM中的节目(掉电丢失)；=ROOT_DOWNLOAD表示更新控制卡Flash中的节目(掉电不丢失)
+//  RootType
+//  为播放类型；=ROOT_PLAY表示更新控制卡RAM中的节目(掉电丢失)；=ROOT_DOWNLOAD表示更新控制卡Flash中的节目(掉电不丢失)
 //  ColorMode 为颜色模式；取值为COLOR_MODE_MONO或者COLOR
-//  survive 为RAM节目生存时间，在RootType=ROOT_PLAY时有效，当RAM节目播放达到时间后，恢复显示FLASH中的节目
-long (_stdcall *MakeRoot)(long RootType, long ColorMode, long survive/* = ROOT_SURVIVE_ALWAYS */);
+//  survive
+//  为RAM节目生存时间，在RootType=ROOT_PLAY时有效，当RAM节目播放达到时间后，恢复显示FLASH中的节目
+__declspec(dllimport) long __stdcall MakeRoot(
+    long RootType, long ColorMode, long survive /* = ROOT_SURVIVE_ALWAYS */);
 
 //生成节目数据，后续需要调用[AddRegion]->[AddLeaf]->[AddObject]->[AddWindows/AddDateTime等]
 //  RootType 必须设为ROOT_PLAY_CHAPTER
@@ -457,9 +503,13 @@ long (_stdcall *MakeRoot)(long RootType, long ColorMode, long survive/* = ROOT_S
 //  ChapterIndex 要更新的节目序号
 //  ColorMode 同MakeRoot中的定义
 //  time 播放的时间长度
-//  wait 等待模式，=WAIT_CHILD，表示当达到播放时间长度时，需要等待子节目播放完成再切换；
+//  wait
+//  等待模式，=WAIT_CHILD，表示当达到播放时间长度时，需要等待子节目播放完成再切换；
 //                 =WAIT_USE_TIME，表示当达到播放时间长度时，不等待子节目播放完成，直接切换下一节目
-long (_stdcall *MakeChapter)(long RootType, long ActionMode, long ChapterIndex, long ColorMode, DWORD time, WORD wait);
+__declspec(dllimport) long __stdcall MakeChapter(long RootType, long ActionMode,
+                                                 long ChapterIndex,
+                                                 long ColorMode, DWORD time,
+                                                 WORD wait);
 
 //生成分区，后续需要调用[AddLeaf]->[AddObject]->[AddWindows/AddDateTime等]
 //  RootType 必须设为ROOT_PLAY_REGION
@@ -469,7 +519,9 @@ long (_stdcall *MakeChapter)(long RootType, long ActionMode, long ChapterIndex, 
 //  ColorMode 同MakeRoot中的定义
 //  left、top、width、height 左、上、宽度、高度
 //  border 流水边框
-long (_stdcall *MakeRegion)(long RootType, long ActionMode, long ChapterIndex, long RegionIndex, long ColorMode, long left, long top, long width, long height, long border);
+__declspec(dllimport) long __stdcall MakeRegion(
+    long RootType, long ActionMode, long ChapterIndex, long RegionIndex,
+    long ColorMode, long left, long top, long width, long height, long border);
 
 //生成页面，后续需要调用[AddObject]->[AddWindows/AddDateTime等]
 //  RootType 必须设为ROOT_PLAY_LEAF
@@ -479,9 +531,14 @@ long (_stdcall *MakeRegion)(long RootType, long ActionMode, long ChapterIndex, l
 //  LeafIndex 要更新的页面序号
 //  ColorMode 同MakeRoot中的定义
 //  time 播放的时间长度
-//  wait 等待模式，=WAIT_CHILD，表示当达到播放时间长度时，需要等待子节目播放完成再切换；
+//  wait
+//  等待模式，=WAIT_CHILD，表示当达到播放时间长度时，需要等待子节目播放完成再切换；
 //                 =WAIT_USE_TIME，表示当达到播放时间长度时，不等待子节目播放完成，直接切换下一页面
-long (_stdcall *MakeLeaf)(long RootType, long ActionMode, long ChapterIndex, long RegionIndex, long LeafIndex, long ColorMode, DWORD time, WORD wait);
+__declspec(dllimport) long __stdcall MakeLeaf(long RootType, long ActionMode,
+                                              long ChapterIndex,
+                                              long RegionIndex, long LeafIndex,
+                                              long ColorMode, DWORD time,
+                                              WORD wait);
 
 //生成播放对象，后续需要调用[AddWindows/AddDateTime等]
 //  RootType 必须设为ROOT_PLAY_OBJECT
@@ -491,69 +548,87 @@ long (_stdcall *MakeLeaf)(long RootType, long ActionMode, long ChapterIndex, lon
 //  LeafIndex 要更新的页面序号
 //  ObjectIndex 要更新的对象序号
 //  ColorMode 同MakeRoot中的定义
-long (_stdcall *MakeObject)(long RootType, long ActionMode, long ChapterIndex, long RegionIndex, long LeafIndex, long ObjectIndex, long ColorMode);
+__declspec(dllimport) long __stdcall MakeObject(
+    long RootType, long ActionMode, long ChapterIndex, long RegionIndex,
+    long LeafIndex, long ObjectIndex, long ColorMode);
 
 //添加节目
 //  num 节目数据缓冲区编号，是MakeRoot的返回值
 //  time 播放的时间长度
-//  wait 等待模式，=WAIT_CHILD，表示当达到播放时间长度时，需要等待子节目播放完成再切换；
+//  wait
+//  等待模式，=WAIT_CHILD，表示当达到播放时间长度时，需要等待子节目播放完成再切换；
 //                 =WAIT_USE_TIME，表示当达到播放时间长度时，不等待子节目播放完成，直接切换下一节目
-long (_stdcall *AddChapter)(WORD num, DWORD time, WORD wait); //time为毫秒
+__declspec(dllimport) long __stdcall AddChapter(WORD num, DWORD time,
+                                                WORD wait);  // time为毫秒
 
 //添加分区
 //  num 节目数据缓冲区编号，是MakeRoot、MakeChapter的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  border 流水边框
-long (_stdcall *AddRegion)(WORD num, long left, long top, long width, long height, long border);
+__declspec(dllimport) long __stdcall AddRegion(WORD num, long left, long top,
+                                               long width, long height,
+                                               long border);
 
 //添加页面
 //  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion的返回值
 //  time 播放的时间长度
-//  wait 等待模式，=WAIT_CHILD，表示当达到播放时间长度时，需要等待子节目播放完成再切换；
+//  wait
+//  等待模式，=WAIT_CHILD，表示当达到播放时间长度时，需要等待子节目播放完成再切换；
 //                 =WAIT_USE_TIME，表示当达到播放时间长度时，不等待子节目播放完成，直接切换下一页面
-long (_stdcall *AddLeaf)(WORD num, DWORD time, WORD wait); //time为毫秒
+__declspec(dllimport) long __stdcall AddLeaf(WORD num, DWORD time,
+                                             WORD wait);  // time为毫秒
 
 //添加日期时间显示
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
 //  fontname 字体名称
 //  fontsize 字体大小
 //  fontcolor 字体颜色
-//  fontstyle 字体样式 举例：=WFS_BOLD表示粗体；=WFS_ITALIC表示斜体；=WFS_BOLD+WFS_ITALIC表示粗斜体
+//  fontstyle 字体样式
+//  举例：=WFS_BOLD表示粗体；=WFS_ITALIC表示斜体；=WFS_BOLD+WFS_ITALIC表示粗斜体
 //  year_offset 年偏移量
 //  month_offset 月偏移量
 //  day_offset 日偏移量
 //  sec_offset 秒偏移量
-//  format 显示格式 
-//      #y表示年 #m表示月 #d表示日 #h表示时 #n表示分 #s表示秒 #w表示星期 #c表示农历
-//      举例： format="#y年#m月#d日 #h时#n分#s秒 星期#w 农历#c"时，显示为"2009年06月27日 12时38分45秒 星期六 农历五月初五"
-long (_stdcall *AddDateTime)(WORD num, long left, long top, long width, long height, long transparent, long border,
-		char* fontname, long fontsize, long fontcolor, long fontstyle, 
-        long year_offset, long month_offset, long day_offset, long sec_offset, char* format);
+//  format 显示格式
+//      #y表示年 #m表示月 #d表示日 #h表示时 #n表示分 #s表示秒 #w表示星期
+//      #c表示农历 举例： format="#y年#m月#d日 #h时#n分#s秒 星期#w
+//      农历#c"时，显示为"2009年06月27日 12时38分45秒 星期六 农历五月初五"
+__declspec(dllimport) long __stdcall AddDateTime(
+    WORD num, long left, long top, long width, long height, long transparent,
+    long border, char *fontname, long fontsize, long fontcolor, long fontstyle,
+    long year_offset, long month_offset, long day_offset, long sec_offset,
+    char *format);
 
 //添加作战时间显示
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
 //  fontname 字体名称
 //  fontsize 字体大小
 //  fontcolor 字体颜色
-//  fontstyle 字体样式 举例：=WFS_BOLD表示粗体；=WFS_ITALIC表示斜体；=WFS_BOLD+WFS_ITALIC表示粗斜体
-//  format 显示格式 
+//  fontstyle 字体样式
+//  举例：=WFS_BOLD表示粗体；=WFS_ITALIC表示斜体；=WFS_BOLD+WFS_ITALIC表示粗斜体
+//  format 显示格式
 //      #y表示年 #m表示月 #d表示日 #h表示时 #n表示分 #s表示秒
 //  basetime 作战时间
 //  fromtime 开始时间
 //  totime 结束时间
 //  step 计时走秒时间步长（多少毫秒走一秒）
-long (_stdcall *AddCampaignEx)(WORD num, long left, long top, long width, long height, long transparent, long border, 
-		char* fontname, long fontsize, long fontcolor, long fontstyle, 
-		char* format, PTimeStamp basetime, PTimeStamp fromtime, PTimeStamp totime, long step);
+__declspec(dllimport) long __stdcall AddCampaignEx(
+    WORD num, long left, long top, long width, long height, long transparent,
+    long border, char *fontname, long fontsize, long fontcolor, long fontstyle,
+    char *format, PTimeStamp basetime, PTimeStamp fromtime, PTimeStamp totime,
+    long step);
 
 //添加模拟时钟
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
@@ -573,29 +648,39 @@ long (_stdcall *AddCampaignEx)(WORD num, long left, long top, long width, long h
 //  minutecolor: 分针颜色
 //  secondwidth: 秒针粗细
 //  secondcolor: 秒针颜色
-long (_stdcall *AddClock)(WORD num, long left, long top, long width, long height, long transparent, long border, long offset,
-		DWORD bkcolor, DWORD framecolor, DWORD framewidth, long frameshape,
-		long dotradius, long adotwidth, DWORD adotcolor, long bdotwidth, DWORD bdotcolor,
-        long hourwidth, DWORD hourcolor, long minutewidth, DWORD minutecolor, long secondwidth, DWORD secondcolor);
+__declspec(dllimport) long __stdcall AddClock(
+    WORD num, long left, long top, long width, long height, long transparent,
+    long border, long offset, DWORD bkcolor, DWORD framecolor, DWORD framewidth,
+    long frameshape, long dotradius, long adotwidth, DWORD adotcolor,
+    long bdotwidth, DWORD bdotcolor, long hourwidth, DWORD hourcolor,
+    long minutewidth, DWORD minutecolor, long secondwidth, DWORD secondcolor);
 
 //添加动画
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
 //  filename avi文件名
 //  stretch: 图像是否拉伸以适应对象大小
-long (_stdcall *AddMovie)(WORD num, long left, long top, long width, long height, long transparent, long border, char* filename, long stretch);
+__declspec(dllimport) long __stdcall AddMovie(WORD num, long left, long top,
+                                              long width, long height,
+                                              long transparent, long border,
+                                              char *filename, long stretch);
 
 //添加图片组播放
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
-long (_stdcall *AddWindows)(WORD num, long left, long top, long width, long height, long transparent, long border);
+__declspec(dllimport) long __stdcall AddWindows(WORD num, long left, long top,
+                                                long width, long height,
+                                                long transparent, long border);
 
 //添加图片组的子图片 此函数要跟在AddWindows后面调用
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  dc 源图片DC句柄
 //  width 图片宽度
 //  height 图片高度
@@ -606,10 +691,15 @@ long (_stdcall *AddWindows)(WORD num, long left, long top, long width, long heig
 //  stopmethod 停留方式(下面有列表说明)
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
-long (_stdcall *AddChildWindow)(WORD num, HDC dc, long width, long height, long alignment, long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime); //stoptime单位为秒
+__declspec(dllimport) long __stdcall AddChildWindow(
+    WORD num, HDC dc, long width, long height, long alignment, long inmethod,
+    long inspeed, long outmethod, long outspeed, long stopmethod,
+    long stopspeed,
+    long stoptime);  // stoptime单位为秒
 
 //添加图片组的子图片 此函数要跟在AddWindows后面调用
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  filename 图片文件名
 //  inmethod 引入方式(下面有列表说明)
 //  inspeed 引入速度(取值范围0-5，从快到慢)
@@ -618,15 +708,20 @@ long (_stdcall *AddChildWindow)(WORD num, HDC dc, long width, long height, long 
 //  stopmethod 停留方式(下面有列表说明)
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
-long (_stdcall *AddChildPicture)(WORD num, char* filename, long alignment, long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime); //stoptime单位为秒
+__declspec(dllimport) long __stdcall AddChildPicture(
+    WORD num, char *filename, long alignment, long inmethod, long inspeed,
+    long outmethod, long outspeed, long stopmethod, long stopspeed,
+    long stoptime);  // stoptime单位为秒
 
 //添加图片组的子图片 此函数要跟在AddWindows后面调用
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  str 文字字符串
 //  fontname 字体名称
 //  fontsize 字体大小
 //  fontcolor 字体颜色
-//  fontstyle 字体样式 举例：=WFS_BOLD表示粗体；=WFS_ITALIC表示斜体；=WFS_BOLD+WFS_ITALIC表示粗斜体
+//  fontstyle 字体样式
+//  举例：=WFS_BOLD表示粗体；=WFS_ITALIC表示斜体；=WFS_BOLD+WFS_ITALIC表示粗斜体
 //  wordwrap 是否自动换行 =1自动换行；=0不自动换行
 //  inmethod 引入方式(下面有列表说明)
 //  inspeed 引入速度(取值范围0-5，从快到慢)
@@ -635,17 +730,25 @@ long (_stdcall *AddChildPicture)(WORD num, char* filename, long alignment, long 
 //  stopmethod 停留方式(下面有列表说明)
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
-long (_stdcall *AddChildText)(WORD num, char* str, char* fontname, long fontsize, long fontcolor, long fontstyle, long wordwrap, long alignment, long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime); //stoptime单位为毫秒
+__declspec(dllimport) long __stdcall AddChildText(
+    WORD num, char *str, char *fontname, long fontsize, long fontcolor,
+    long fontstyle, long wordwrap, long alignment, long inmethod, long inspeed,
+    long outmethod, long outspeed, long stopmethod, long stopspeed,
+    long stoptime);  // stoptime单位为毫秒
 
 //添加内码文字组播放
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
-long (_stdcall *AddStrings)(WORD num, long left, long top, long width, long height, long transparent, long border);
+__declspec(dllimport) long __stdcall AddStrings(WORD num, long left, long top,
+                                                long width, long height,
+                                                long transparent, long border);
 
 //添加图片组的子图片 此函数要跟在AddWindows后面调用
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  str 文字字符串
 //  fontset 字库 =FONTSET_16P表示16点阵字库；=FONTSET_24P表示24点阵字库
 //  color 颜色
@@ -656,10 +759,14 @@ long (_stdcall *AddStrings)(WORD num, long left, long top, long width, long heig
 //  stopmethod 停留方式(下面有列表说明)
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
-long (_stdcall *AddChildString)(WORD num, char* str, long fontset, long color, long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime); //stoptime单位为毫秒
+__declspec(dllimport) long __stdcall AddChildString(
+    WORD num, char *str, long fontset, long color, long inmethod, long inspeed,
+    long outmethod, long outspeed, long stopmethod, long stopspeed,
+    long stoptime);  // stoptime单位为毫秒
 
 //添加图片点阵播放
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
@@ -673,11 +780,16 @@ long (_stdcall *AddChildString)(WORD num, char* str, long fontset, long color, l
 //  stopmethod 停留方式(下面有列表说明)
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
-long (_stdcall *AddWindow)(WORD num, long left, long top, long width, long height, long transparent, long border,
-		HDC dc, long src_width, long src_height, long alignment, long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime); //stoptime单位为毫秒
+__declspec(dllimport) long __stdcall AddWindow(
+    WORD num, long left, long top, long width, long height, long transparent,
+    long border, HDC dc, long src_width, long src_height, long alignment,
+    long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod,
+    long stopspeed,
+    long stoptime);  // stoptime单位为毫秒
 
 //添加图片文件播放
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
@@ -689,11 +801,15 @@ long (_stdcall *AddWindow)(WORD num, long left, long top, long width, long heigh
 //  stopmethod 停留方式(下面有列表说明)
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
-long (_stdcall *AddPicture)(WORD num, long left, long top, long width, long height, long transparent, long border,
-		char* filename, long alignment, long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime); //stoptime单位为毫秒
+__declspec(dllimport) long __stdcall AddPicture(
+    WORD num, long left, long top, long width, long height, long transparent,
+    long border, char *filename, long alignment, long inmethod, long inspeed,
+    long outmethod, long outspeed, long stopmethod, long stopspeed,
+    long stoptime);  // stoptime单位为毫秒
 
 //添加文字播放
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
@@ -701,7 +817,8 @@ long (_stdcall *AddPicture)(WORD num, long left, long top, long width, long heig
 //  fontname 字体名称
 //  fontsize 字体大小
 //  fontcolor 字体颜色
-//  fontstyle 字体样式 举例：=WFS_BOLD表示粗体；=WFS_ITALIC表示斜体；=WFS_BOLD+WFS_ITALIC表示粗斜体
+//  fontstyle 字体样式
+//  举例：=WFS_BOLD表示粗体；=WFS_ITALIC表示斜体；=WFS_BOLD+WFS_ITALIC表示粗斜体
 //  wordwrap 是否自动换行 =1自动换行；=0不自动换行
 //  inmethod 引入方式(下面有列表说明)
 //  inspeed 引入速度(取值范围0-5，从快到慢)
@@ -710,12 +827,16 @@ long (_stdcall *AddPicture)(WORD num, long left, long top, long width, long heig
 //  stopmethod 停留方式(下面有列表说明)
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
-long (_stdcall *AddText)(WORD num, long left, long top, long width, long height, long transparent, long border,
-		char* str, char* fontname, long fontsize, long fontcolor, long fontstyle, long wordwrap, long alignment, 
-		long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime); //stoptime单位为毫秒
+__declspec(dllimport) long __stdcall AddText(
+    WORD num, long left, long top, long width, long height, long transparent,
+    long border, char *str, char *fontname, long fontsize, long fontcolor,
+    long fontstyle, long wordwrap, long alignment, long inmethod, long inspeed,
+    long outmethod, long outspeed, long stopmethod, long stopspeed,
+    long stoptime);  // stoptime单位为毫秒
 
 //添加内码文字播放
-//  num 节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
+//  num
+//  节目数据缓冲区编号，是MakeRoot、MakeChapter、MakeRegion、MakeLeaf、MakeObject的返回值
 //  left、top、width、height 左、上、宽度、高度
 //  transparent 是否透明 =1表示透明；=0表示不透明
 //  border 流水边框(未实现)
@@ -729,8 +850,12 @@ long (_stdcall *AddText)(WORD num, long left, long top, long width, long height,
 //  stopmethod 停留方式(下面有列表说明)
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
-long (_stdcall *AddString)(WORD num, long left, long top, long width, long height, long transparent, long border,
-		char* str, long fontset, long color, long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime); //stoptime单位为毫秒
+__declspec(dllimport) long __stdcall AddString(
+    WORD num, long left, long top, long width, long height, long transparent,
+    long border, char *str, long fontset, long color, long inmethod,
+    long inspeed, long outmethod, long outspeed, long stopmethod,
+    long stopspeed,
+    long stoptime);  // stoptime单位为毫秒
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // 深圳人才市场项目专门定制
@@ -753,9 +878,11 @@ long (_stdcall *AddString)(WORD num, long left, long top, long width, long heigh
 //  stopspeed 停留速度(取值范围0-5，从快到慢)
 //  stoptime 停留时间(单位毫秒)
 //  istitle 是否标题
-long (_stdcall *SZRC_MakeTextObject)(long ObjectIndex, long width, long height, 
-		char* str, char* fontname, long fontsize, long fontcolor, long fontstyle, long wordwrap, long alignment,
-		long inmethod, long inspeed, long outmethod, long outspeed, long stopmethod, long stopspeed, long stoptime, long istitle);
+__declspec(dllimport) long __stdcall SZRC_MakeTextObject(
+    long ObjectIndex, long width, long height, char *str, char *fontname,
+    long fontsize, long fontcolor, long fontstyle, long wordwrap,
+    long alignment, long inmethod, long inspeed, long outmethod, long outspeed,
+    long stopmethod, long stopspeed, long stoptime, long istitle);
 
 // ====引入动作方式列表(数值从0开始)====
 //    0 = '随机',
@@ -808,5 +935,9 @@ long (_stdcall *SZRC_MakeTextObject)(long ObjectIndex, long width, long height,
 //    0 = '静态显示',
 //    1 = '闪烁显示'
 // =====================================
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

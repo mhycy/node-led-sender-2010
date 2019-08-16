@@ -24,6 +24,7 @@
     {
       "target_name": "test",
       "sources": [ "src/test.cc" ],
+      'msbuild_toolset': 'v141_xp',
       'conditions': [
         ['OS=="win"', {
             "libraries": [
